@@ -1,1 +1,75 @@
-Exponential Random Music
+# When Does Randomness Become Music?
+
+This project began with hearing an orchestra tune. The sound felt random, but
+not like white noise. The question is: what kind of randomness sounds musical?
+
+We model each instrument as a random walker on a network of MIDI notes. A
+walker is biased toward notes that are harmonically compatible, near a shared
+tuning center, close to its previous note, and playable by that instrument.
+Changing those constraints moves the system from random noise to tuning-like
+texture, coherent harmony, and finally over-constrained lock-in.
+
+## Model
+
+For instrument `i`, the probability of choosing pitch `q` is
+
+```text
+P(p_i(t+1) = q) = exp(S_i(q,t) / tau) / sum_r exp(S_i(r,t) / tau)
+
+S_i(q,t) =
+    beta_move   * w(p_i(t), q)
+  + beta_social * sum_{j != i} A_ij w(q, p_j(t))
+  + beta_tuning * T(q)
+  + beta_memory * M(q, p_i(t))
+```
+
+`tau` is temperature. High temperature produces freer motion; low temperature
+makes the walkers follow the score more deterministically. Harmonic identity is
+computed from pitch class while MIDI pitch preserves register and octave
+distance.
+
+## Outputs
+
+The six presets form an intended progression:
+
+1. `raw_random`: notes sampled across the global C2-C7 range
+2. `range_random`: randomness limited to each instrument's playable range
+3. `tuning_center_only`: attraction to A with light melodic memory
+4. `harmonic_social_tuning`: coupled tuning-like random walkers
+5. `ambient_harmony`: smoother and more strongly coupled motion
+6. `locked_in`: low-temperature, over-constrained harmonic convergence
+
+Running the project writes MIDI clips, per-step metric CSVs, metric plots, a
+phase diagram, and pitch-network visualizations under
+`exponential_random_orchestra/output/`.
+
+## Setup and run
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r exponential_random_orchestra/requirements.txt
+python -m exponential_random_orchestra.main
+```
+
+For a faster smoke run that skips the phase sweep:
+
+```bash
+python -m exponential_random_orchestra.main --duration 5 --skip-phase-sweep
+```
+
+Run tests with:
+
+```bash
+python -m unittest discover -s tests
+```
+
+## Metrics
+
+- Pitch-class entropy measures variety.
+- Average consonance measures pairwise harmonic compatibility.
+- Average tuning score measures attraction to A and related pitch classes.
+- The phase diagram uses normalized entropy times normalized consonance as a
+  deliberately simple "music-like texture" score. Random noise has variety but
+  low consonance; lock-in has consonance but little variety; the interesting
+  region lies between them.
