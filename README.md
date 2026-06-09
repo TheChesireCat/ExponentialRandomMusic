@@ -36,6 +36,71 @@ No music-theory background is required. Start by comparing the six presets,
 then open the phase-diagram notebook to study how temperature and social
 coupling change the system-level behavior.
 
+## Listen to the progression
+
+Each example is the same model with a different constraint preset. Follow the
+list from free randomness toward over-constrained harmonic lock-in:
+
+| Stage | Preset | What to listen for | MP3 |
+| ---: | --- | --- | --- |
+| 1 | `raw_random` | Unrestricted pitches across C2-C7 | **[Play MP3](exponential_random_orchestra/output/mp3/raw_random.mp3?raw=1)** |
+| 2 | `range_random` | Each instrument enters its playable range | **[Play MP3](exponential_random_orchestra/output/mp3/range_random.mp3?raw=1)** |
+| 3 | `tuning_center_only` | Notes begin gathering around A | **[Play MP3](exponential_random_orchestra/output/mp3/tuning_center_only.mp3?raw=1)** |
+| 4 | `harmonic_social_tuning` | Instruments react to one another | **[Play MP3](exponential_random_orchestra/output/mp3/harmonic_social_tuning.mp3?raw=1)** |
+| 5 | `ambient_harmony` | Smoother, more strongly coupled motion | **[Play MP3](exponential_random_orchestra/output/mp3/ambient_harmony.mp3?raw=1)** |
+| 6 | `locked_in` | Low-temperature harmonic convergence | **[Play MP3](exponential_random_orchestra/output/mp3/locked_in.mp3?raw=1)** |
+
+> GitHub repository READMEs do not reliably allow embedded HTML audio controls.
+> These raw-file links open the tracked MP3s in the browser's native player.
+
+## Network at a glance
+
+```text
+              INSTRUMENT-LEVEL SOCIAL NETWORK (SCHEMATIC)
+
+     complete directed graph: every instrument listens to every other
+     same-section edges = 1.00             cross-section edges = 0.25
+
+     +---------------- STRINGS ----------------+     +------ WINDS ------+
+     |                                         |     |                   |
+     |  Violin 1 <----> Violin 2 <----> Viola  |.....| Flute <-> Clarinet|
+     |      ^              ^              ^    |     |   ^          ^    |
+     |      |              |              |    |     |   |          |    |
+     |      +----------> Cello <----------+    |.....|   +--> Oboe <-+    |
+     |                     ^                   |     |        |          |
+     |                     |                   |     +--------|----------+
+     |                   Bass                  |              |
+     +-----------------------------------------+              |
+                                                              |
+                         every instrument listens more strongly
+                         to the oboe: source edge bonus = +0.75
+
+                                      |
+                                      v
+                ONE RANDOM WALKER PER INSTRUMENT
+
+     +----------------+ +----------------+ +----------------+ +----------------+
+     | move harmony   | | social harmony | | tuning to A    | | melodic memory |
+     | w(p_i(t), q)   | | A_ij * harmony | | T(q)           | | M(q, p_i(t))   |
+     +-------+--------+ +-------+--------+ +-------+--------+ +-------+--------+
+             |                  |                  |                  |
+             +------------------+--------+---------+------------------+
+                                         |
+                                  weighted sum
+                                         |
+                                         v
+                          score every candidate pitch q
+                                     |
+                                     v
+                           softmax(score / temperature)
+                                     |
+                                     v
+                              sample next MIDI note
+
+     Each pitch q is a node in the pitch network; harmonic interval weights
+     define its effective connections to the walkers' current MIDI notes.
+```
+
 ## Model
 
 For instrument `i`, the probability of choosing pitch `q` is
