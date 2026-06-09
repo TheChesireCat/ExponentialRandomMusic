@@ -77,28 +77,48 @@ list from free randomness toward over-constrained harmonic lock-in:
 
                                       |
                                       v
-                ONE RANDOM WALKER PER INSTRUMENT
+            PITCH NETWORK WITH INSTRUMENTS AS RANDOM WALKERS
 
-     +----------------+ +----------------+ +----------------+ +----------------+
-     | move harmony   | | social harmony | | tuning to A    | | melodic memory |
-     | w(p_i(t), q)   | | A_ij * harmony | | T(q)           | | M(q, p_i(t))   |
-     +-------+--------+ +-------+--------+ +-------+--------+ +-------+--------+
-             |                  |                  |                  |
-             +------------------+--------+---------+------------------+
-                                         |
-                                  weighted sum
+                                      Violin 2
                                          |
                                          v
-                          score every candidate pitch q
-                                     |
-                                     v
-                           softmax(score / temperature)
-                                     |
-                                     v
-                              sample next MIDI note
+                         .---------[ E5 ]---------.
+                        /             ^            \
+                       /              |             \
+                  [ C5 ]----------[ A4 ]----------[ C#5 ]
+                    ^  \          tonal center       /  ^
+                   /    \             |             /    \
+          Viola --'      \            |            /      `-- Flute
+                         [ E4 ]------[ A3 ]------[ D4 ]
+                           ^           ^           ^  \
+                           |           |           |   `-- Clarinet
+                       Violin 1      Cello         Oboe
+                                       \
+                                        `----[ A2 ]
+                                                ^
+                                                |
+                                               Bass
 
-     Each pitch q is a node in the pitch network; harmonic interval weights
-     define its effective connections to the walkers' current MIDI notes.
+       Each [note] is a MIDI-pitch node. An instrument label marks the
+       node currently occupied by that walker's sounding pitch.
+
+                       ONE WALKER TAKING A STEP
+
+          time t                    score candidate neighbors (illustrative)
+
+       Violin 1                           [C4]  0.12
+          |                               [E4]  0.41
+          v                               [A4]  0.76  <--- social pull
+        [ E4 ] ---- harmonic edges ----> [B4]  0.18       from the oboe
+                                          [E5]  0.53
+                                                |
+                                                | softmax + temperature
+                                                v
+          time t + 1                     Violin 1 walks to [ A4 ]
+
+       At the next step every active instrument repeats this process.
+       Their walks are independent at weak coupling, but begin moving
+       together when social and harmonic coupling become strong.
 ```
 
 ## Model
