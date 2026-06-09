@@ -9,6 +9,33 @@ tuning center, close to its previous note, and playable by that instrument.
 Changing those constraints moves the system from random noise to tuning-like
 texture, coherent harmony, and finally over-constrained lock-in.
 
+## Introduction for network science students
+
+You can read this project as an interacting random-walk model with a musical
+state space:
+
+- MIDI pitches are nodes in a pitch network. Edge weights encode harmonic
+  compatibility between pairs of notes.
+- Instruments are walkers. Each walker occupies one pitch at a time and has a
+  restricted set of nodes determined by the instrument's playable range.
+- A second, instrument-level network controls social coupling. Its weighted
+  adjacency matrix determines how strongly one instrument responds to the
+  pitches currently played by the others.
+- The next pitch is sampled from a softmax distribution, similar to a Gibbs
+  update. Temperature controls stochasticity, while coupling, tuning, and
+  memory terms shape the local energy landscape.
+
+The central network-science question is how collective structure emerges as
+these controls change. Weak coupling and high temperature produce nearly
+independent walkers; stronger coupling produces correlated harmonic motion;
+very low temperature or excessive coupling can collapse the system into a
+small set of states. The included parameter sweep visualizes this transition
+using entropy and consonance as macroscopic observables.
+
+No music-theory background is required. Start by comparing the six presets,
+then open the phase-diagram notebook to study how temperature and social
+coupling change the system-level behavior.
+
 ## Model
 
 For instrument `i`, the probability of choosing pitch `q` is
