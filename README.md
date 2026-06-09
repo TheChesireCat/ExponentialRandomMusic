@@ -164,6 +164,28 @@ pip install -r exponential_random_orchestra/requirements.txt
 python -m exponential_random_orchestra.main
 ```
 
+The MIDI files preserve a different General MIDI program for every instrument.
+To render those tracks as sampled violin, viola, cello, bass, flute, clarinet,
+and oboe sounds, install FluidSynth, FFmpeg, and a General MIDI SoundFont. On
+Ubuntu/Debian:
+
+```bash
+sudo apt install fluidsynth fluid-soundfont-gm ffmpeg
+python -m exponential_random_orchestra.main --render-audio
+```
+
+On other systems, pass a downloaded `.sf2` or `.sf3` file explicitly:
+
+```bash
+python -m exponential_random_orchestra.main \
+  --render-audio \
+  --soundfont /path/to/orchestral-general-midi.sf2
+```
+
+`librosa` is useful for analyzing rendered audio, but it is not a synthesizer.
+The MP3 renderer uses FluidSynth because it maps the MIDI program numbers to
+sampled instruments stored in the SoundFont.
+
 For a faster smoke run that skips the phase sweep:
 
 ```bash

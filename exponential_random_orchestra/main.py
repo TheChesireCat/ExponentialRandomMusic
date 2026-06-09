@@ -1,15 +1,18 @@
 """Command-line entry point for generating the complete demo."""
 
 import argparse
+from pathlib import Path
 
 import numpy as np
 
+from .audio import find_soundfont, render_midi_to_mp3
 from .config import (
     DATA_DIR,
     DEFAULT_DT,
     DEFAULT_SEED,
     DEFAULT_TOTAL_TIME,
     MIDI_DIR,
+    MP3_DIR,
     PLOTS_DIR,
     ensure_output_directories,
 )
@@ -25,12 +28,19 @@ from .visualize import (
 )
 
 
-def run_presets(total_time, dt, seed):
+def run_presets(total_time, dt, seed, render_audio=False, soundfont_path=None):
     for index, (name, params) in enumerate(PRESETS.items()):
         events, history = generate_sequence(
             INSTRUMENTS, params, total_time=total_time, dt=dt, seed=seed + index
         )
-        write_midi(events, INSTRUMENTS, MIDI_DIR / f"{name}.mid")
+        midi_path = MIDI_DIR / f"{name}.mid"
+        write_midi(events, INSTRUMENTS, midi_path)
+        if render_audio:
+            render_midi_to_mp3(
+                midi_path,
+                MP3_DIR / f"{name}.mp3",
+                soundfont_path=soundfont_path,
+            )
         metrics = compute_metrics_over_time(history, dt=dt)
         metrics.to_csv(DATA_DIR / f"{name}_metrics.csv", index=False)
         plot_metrics_over_time(
@@ -86,13 +96,30 @@ def parse_args():
     parser.add_argument("--phase-grid-size", type=int, default=25)
     parser.add_argument("--phase-duration", type=float, default=10.0)
     parser.add_argument("--skip-phase-sweep", action="store_true")
+    parser.add_argument(
+        "--render-audio",
+        action="store_true",
+        help="render sampled-instrument MP3s with FluidSynth and FFmpeg",
+    )
+    parser.add_argument(
+        "--soundfont",
+        type=Path,
+        help="path to a General MIDI .sf2/.sf3 file",
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     ensure_output_directories()
-    run_presets(args.duration, args.dt, args.seed)
+    soundfont_path = find_soundfont(args.soundfont) if args.render_audio else None
+    run_presets(
+        args.duration,
+        args.dt,
+        args.seed,
+        render_audio=args.render_audio,
+        soundfont_path=soundfont_path,
+    )
     plot_pitch_class_circle(PLOTS_DIR / "pitch_class_circle.png")
     plot_pitch_spiral(PLOTS_DIR / "pitch_spiral.png")
     if not args.skip_phase_sweep:
@@ -103,4 +130,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

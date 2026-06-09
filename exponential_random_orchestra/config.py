@@ -14,11 +14,11 @@ DEFAULT_SEED = 2026
 PACKAGE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = PACKAGE_DIR / "output"
 MIDI_DIR = OUTPUT_DIR / "midi"
+MP3_DIR = OUTPUT_DIR / "mp3"
 PLOTS_DIR = OUTPUT_DIR / "plots"
 DATA_DIR = OUTPUT_DIR / "data"
 
 
 def ensure_output_directories() -> None:
-    for directory in (MIDI_DIR, PLOTS_DIR, DATA_DIR):
+    for directory in (MIDI_DIR, MP3_DIR, PLOTS_DIR, DATA_DIR):
         directory.mkdir(parents=True, exist_ok=True)
-

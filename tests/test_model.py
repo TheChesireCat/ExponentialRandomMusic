@@ -1,7 +1,11 @@
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 import numpy as np
 
+from exponential_random_orchestra.audio import find_soundfont, render_midi_to_mp3
 from exponential_random_orchestra.generator import generate_sequence, sample_softmax
 from exponential_random_orchestra.harmony import harmonic_weight, interval_class, memory_score
 from exponential_random_orchestra.instruments import INSTRUMENTS, build_interaction_matrix
@@ -66,6 +70,38 @@ class ModelTests(unittest.TestCase):
     def test_metrics(self):
         self.assertAlmostEqual(pitch_class_entropy([60, 72]), 0.0)
         self.assertGreater(average_consonance([60, 67]), 0.0)
+
+
+class AudioTests(unittest.TestCase):
+    def test_explicit_soundfont_must_exist(self):
+        with self.assertRaises(FileNotFoundError):
+            find_soundfont("/does/not/exist.sf2")
+
+    def test_renderer_uses_fluidsynth_then_ffmpeg(self):
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            midi_path = root / "input.mid"
+            soundfont_path = root / "orchestra.sf2"
+            mp3_path = root / "output" / "clip.mp3"
+            midi_path.touch()
+            soundfont_path.touch()
+
+            with (
+                patch(
+                    "exponential_random_orchestra.audio.shutil.which",
+                    side_effect=lambda command: f"/usr/bin/{command}",
+                ),
+                patch("exponential_random_orchestra.audio.subprocess.run") as run,
+            ):
+                render_midi_to_mp3(midi_path, mp3_path, soundfont_path)
+
+            self.assertEqual(run.call_count, 2)
+            fluidsynth_command = run.call_args_list[0].args[0]
+            ffmpeg_command = run.call_args_list[1].args[0]
+            self.assertEqual(fluidsynth_command[0], "/usr/bin/fluidsynth")
+            self.assertIn(str(soundfont_path), fluidsynth_command)
+            self.assertEqual(ffmpeg_command[0], "/usr/bin/ffmpeg")
+            self.assertEqual(ffmpeg_command[-1], str(mp3_path))
 
 
 if __name__ == "__main__":
