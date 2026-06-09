@@ -61,17 +61,18 @@ list from free randomness toward over-constrained harmonic lock-in:
      complete directed graph: every instrument listens to every other
      same-section edges = 1.00             cross-section edges = 0.25
 
-     +---------------- STRINGS ----------------+     +------ WINDS ------+
-     |                                         |     |                   |
-     |  Violin 1 <----> Violin 2 <----> Viola  |.....| Flute <-> Clarinet|
-     |      ^              ^              ^    |     |   ^          ^    |
-     |      |              |              |    |     |   |          |    |
-     |      +----------> Cello <----------+    |.....|   +--> Oboe <-+    |
-     |                     ^                   |     |        |          |
-     |                     |                   |     +--------|----------+
-     |                   Bass                  |              |
-     +-----------------------------------------+              |
-                                                              |
+     +----------- STRINGS -----------+   +---------- WINDS ----------+
+     | Violin 1, Violin 2, Viola,    |...| Piccolo, Flute, Oboe,     |
+     | Cello, Bass                   |   | Clarinet, Bassoon         |
+     +-------------------------------+   +---------------------------+
+                   .                                  .
+                    .                                .
+              +-----+-------+                +------+------+
+              |   KEYBOARD  |................|    BRASS    |
+              | Grand Piano |                | Horn, Trumpet,|
+              +-------------+                | Trombone, Tuba |
+                                             +---------------+
+
                          every instrument listens more strongly
                          to the oboe: source edge bonus = +0.75
 
@@ -88,16 +89,16 @@ list from free randomness toward over-constrained harmonic lock-in:
                   [ C5 ]----------[ A4 ]----------[ C#5 ]
                     ^  \          tonal center       /  ^
                    /    \             |             /    \
-          Viola --'      \            |            /      `-- Flute
+     Viola, Horn --'      \            |            /      `-- Flute, Piccolo
                          [ E4 ]------[ A3 ]------[ D4 ]
                            ^           ^           ^  \
                            |           |           |   `-- Clarinet
-                       Violin 1      Cello         Oboe
+                  Violin 1, Piano  Cello, Bassoon  Oboe, Trumpet
                                        \
                                         `----[ A2 ]
                                                 ^
                                                 |
-                                               Bass
+                                      Bass, Trombone, Tuba
 
        Each [note] is a MIDI-pitch node. An instrument label marks the
        node currently occupied by that walker's sounding pitch.
@@ -164,9 +165,9 @@ pip install -r exponential_random_orchestra/requirements.txt
 python -m exponential_random_orchestra.main
 ```
 
-The MIDI files preserve a different General MIDI program for every instrument.
-To render those tracks as sampled violin, viola, cello, bass, flute, clarinet,
-and oboe sounds, install FluidSynth, FFmpeg, and a General MIDI SoundFont. On
+The 15 MIDI tracks preserve a General MIDI program for every instrument:
+strings, woodwinds, brass, and acoustic grand piano. To render them as sampled
+instruments, install FluidSynth, FFmpeg, and a General MIDI SoundFont. On
 Ubuntu/Debian:
 
 ```bash

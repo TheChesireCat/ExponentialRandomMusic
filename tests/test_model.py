@@ -26,6 +26,17 @@ class HarmonyTests(unittest.TestCase):
 
 
 class ModelTests(unittest.TestCase):
+    def test_ensemble_fills_fifteen_melodic_midi_channels(self):
+        self.assertEqual(len(INSTRUMENTS), 15)
+        self.assertEqual(len({instrument["name"] for instrument in INSTRUMENTS}), 15)
+
+    def test_ensemble_includes_grand_piano(self):
+        piano = next(
+            instrument for instrument in INSTRUMENTS
+            if instrument["name"] == "Grand Piano"
+        )
+        self.assertEqual(piano["program"], 0)
+
     def test_oboe_has_extra_influence(self):
         matrix = build_interaction_matrix(INSTRUMENTS)
         violin = 0

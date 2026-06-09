@@ -43,6 +43,41 @@ INSTRUMENTS = [
         "pitch_min": 58, "pitch_max": 91, "activity_rate": 0.18,
         "volume_mean": 60, "volume_std": 8,
     },
+    {
+        "name": "Piccolo", "section": "winds", "program": 72,
+        "pitch_min": 74, "pitch_max": 103, "activity_rate": 0.12,
+        "volume_mean": 52, "volume_std": 8,
+    },
+    {
+        "name": "Bassoon", "section": "winds", "program": 70,
+        "pitch_min": 34, "pitch_max": 75, "activity_rate": 0.16,
+        "volume_mean": 57, "volume_std": 9,
+    },
+    {
+        "name": "French Horn", "section": "brass", "program": 60,
+        "pitch_min": 41, "pitch_max": 77, "activity_rate": 0.17,
+        "volume_mean": 58, "volume_std": 9,
+    },
+    {
+        "name": "Trumpet", "section": "brass", "program": 56,
+        "pitch_min": 54, "pitch_max": 82, "activity_rate": 0.14,
+        "volume_mean": 60, "volume_std": 9,
+    },
+    {
+        "name": "Trombone", "section": "brass", "program": 57,
+        "pitch_min": 40, "pitch_max": 72, "activity_rate": 0.13,
+        "volume_mean": 59, "volume_std": 9,
+    },
+    {
+        "name": "Tuba", "section": "brass", "program": 58,
+        "pitch_min": 28, "pitch_max": 58, "activity_rate": 0.11,
+        "volume_mean": 58, "volume_std": 8,
+    },
+    {
+        "name": "Grand Piano", "section": "keyboard", "program": 0,
+        "pitch_min": 36, "pitch_max": 96, "activity_rate": 0.22,
+        "volume_mean": 57, "volume_std": 10,
+    },
 ]
 
 
@@ -59,4 +94,3 @@ def build_interaction_matrix(instruments=INSTRUMENTS):
                 matrix[i, j] += 0.75
 
     return matrix
-
