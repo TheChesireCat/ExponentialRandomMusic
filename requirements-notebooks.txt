@@ -1,0 +1,4 @@
+-r exponential_random_orchestra/requirements.txt
+jupyterlab>=4.2
+ipykernel>=6.29
+

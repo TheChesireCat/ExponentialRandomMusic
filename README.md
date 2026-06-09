@@ -64,6 +64,20 @@ Run tests with:
 python -m unittest discover -s tests
 ```
 
+## Explore the outputs
+
+The `notebooks/` directory contains reproducible analyses of the generated
+artifacts. Install the optional notebook tools and start Jupyter from the
+repository root:
+
+```bash
+pip install -r requirements-notebooks.txt
+jupyter lab
+```
+
+Start with `01_preset_output_exploration.ipynb`, then use
+`02_phase_diagram_exploration.ipynb` to inspect the parameter sweep.
+
 ## Metrics
 
 - Pitch-class entropy measures variety.
