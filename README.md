@@ -1,4 +1,4 @@
-# When Does Randomness Become Music?
+# Exponential Random Music : When Does Randomness Become Music?
 
 This project began with hearing an orchestra tune. The sound felt random, but
 not like static. It was messy, but still somehow musical. The question is: what
